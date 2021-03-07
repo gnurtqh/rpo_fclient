@@ -56,8 +56,19 @@ set_target_properties(
 target_include_directories(
         native-lib PUBLIC
         ~/AndroidStudioProjects/rpo_fclient/libs/spdlog/spdlog/include
+        ~/AndroidStudioProjects/rpo_fclient/libs/mbedtls/mbedtls/include
 )
+add_library(mbedcrypto SHARED IMPORTED)
+set_target_properties(mbedcrypto PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../cmakeLibs/${ANDROID_ABI}/libmbedcrypto.so)
+
+configure_file(
+        /home/trunqh/AndroidStudioProjects/rpo_fclient/libs/mbedtls/build/${ANDROID_ABI}/library/libmbedcrypto.so
+        ${CMAKE_CURRENT_SOURCE_DIR}/../cmakeLibs/${ANDROID_ABI}/libmbedcrypto.so
+        COPYONLY
+)
+
 target_link_libraries(
         native-lib
         spdlog
+        mbedcrypto
 )
