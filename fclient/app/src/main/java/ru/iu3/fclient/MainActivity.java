@@ -1,5 +1,6 @@
 package ru.iu3.fclient;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,29 +30,49 @@ public class MainActivity extends AppCompatActivity {
 
         int res = initRng();
         Log.i("fclient", "Init Rng = " + res);
-        byte[] rnd = randomBytes(16);
-        byte[] data = {'a', 'b', 'c', 'd', '1', '2', '3', '4'};
-        byte[] encrypted = encrypt(rnd, data);
-        byte[] decrypted = decrypt(rnd, encrypted);
-        String originalData = new String(data, StandardCharsets.UTF_8);
-        String encryptedData = new String(encrypted, StandardCharsets.UTF_8);
-        String decryptedData = new String(decrypted, StandardCharsets.UTF_8);
+//        byte[] rnd = randomBytes(16);
+//        byte[] data = {'a', 'b', 'c', 'd', '1', '2', '3', '4'};
+//        byte[] encrypted = encrypt(rnd, data);
+//        byte[] decrypted = decrypt(rnd, encrypted);
+//        String originalData = new String(data, StandardCharsets.UTF_8);
+//        String encryptedData = new String(encrypted, StandardCharsets.UTF_8);
+//        String decryptedData = new String(decrypted, StandardCharsets.UTF_8);
 
     }
 
     public static byte[] StringToHex(String s) {
+        byte[] hex;
         try {
-            return Hex.decodeHex(s.toCharArray());
+            hex = Hex.decodeHex(s.toCharArray());
         }
         catch (DecoderException ex) {
-
+            hex = null;
         }
-        return new byte[0];
+        return hex;
     }
 
     protected void onButtonClick(View v) {
-        Toast.makeText(this, stringFromJNI(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, stringFromJNI(), Toast.LENGTH_SHORT).show();
+//        byte[] key = randomBytes(16);
+//        byte[] data = {5, 3, 4, 7, 8, 9, 3};
+//        System.out.println(data);
+//        byte[] enc = encrypt(key, data);
+//        byte[] dec = decrypt(key, enc);
+//        String s = new String(Hex.encodeHex(dec)).toUpperCase();
+//        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+        Intent it = new Intent(this, PinPadActivity.class);
+        startActivityForResult(it, 0);
     }
+//    protected void TestHttpCLient(){
+//        new Thread(()->{
+//            try {
+//
+//            } catch (Exception ex) {
+//                Log.e("fapptag", "Http Client Fails", ex);
+//            }
+//        }).start();
+//    }
+
 
     public native String stringFromJNI();
     public static native int initRng();
