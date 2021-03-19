@@ -9,26 +9,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="ВВЕДИТЕ ПИП-КОД"
+        android:text="ВВЕДИТЕ ПИН-КОД"
         android:textAlignment="center"
-        android:textSize="20dp" />
+        android:textSize="16dp" />
+
 
     <TextView
         android:id="@+id/txtPin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="28dp"
+        android:text=""
         android:textAlignment="center"
-        android:text="" />
-
+        android:textSize="28dp" />
 
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:orientation="horizontal"
-        android:layout_marginTop="350dp"
-
+        android:layout_marginTop="300dp"
         android:columnCount="3">
 
         <Button android:id="@+id/button1" android:text="1" android:onClick="keyClick" style="@style/Button"/>
