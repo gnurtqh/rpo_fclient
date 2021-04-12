@@ -14,14 +14,16 @@ public class Painting {
     @Column(name="id", updatable = false, nullable = false)
     public long id;
 
-    @Column(name="name")
+    @Column(name="name", nullable = false)
     public String name;
 
-    @Column(name="artistid")
-    public long artistid;
+    @ManyToOne
+    @JoinColumn(name="artistid")
+    public Artist artist;
 
-    @Column(name="museumid")
-    public long museumid;
+    @ManyToOne
+    @JoinColumn(name="museumid")
+    public Museum museum;
 
     @Column(name="year")
     public int year;

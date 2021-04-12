@@ -1,6 +1,12 @@
 package ru.iu3.rpo.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="museums")
@@ -14,9 +20,18 @@ public class Museum {
     @Column(name="id", updatable = false, nullable = false)
     public long id;
 
-    @Column(name="name")
+    @Column(name="name", nullable = false)
     public String name;
 
     @Column(name="location")
     public String location;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "museum")
+    public List<Painting> paintings = new ArrayList<Painting>();
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name="usersmuseums", joinColumns = @JoinColumn(name = "museumid"), inverseJoinColumns = @JoinColumn(name = "userid"))
+    public Set<User> users = new HashSet<>();
 }
