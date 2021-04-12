@@ -51,8 +51,8 @@ public class PaintingController {
         if (cc.isPresent()) {
             painting = cc.get();
             painting.name = paintingDetails.name;
-            painting.artistid = paintingDetails.artistid;
-            painting.museumid = paintingDetails.museumid;
+            painting.artist = paintingDetails.artist;
+            painting.museum = paintingDetails.museum;
             painting.year = paintingDetails.year;
             paintingRepository.save(painting);
         } else {

@@ -6,13 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import ru.iu3.rpo.backend.models.Artist;
 import ru.iu3.rpo.backend.models.Country;
 import ru.iu3.rpo.backend.repositories.CountryRepository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -23,6 +21,16 @@ public class CountryController {
     public List<Country> getAllCountries() {
         return countryRepository.findAll();
     }
+
+    @GetMapping("/countries/{id}/artists")
+    public ResponseEntity<List<Artist>> getArtistsCountry(@PathVariable(value="id") Long countryId){
+        Optional<Country> currentCountry = countryRepository.findById(countryId);
+        if(currentCountry.isPresent()){
+            return ResponseEntity.ok(currentCountry.get().artists);
+        }
+        return ResponseEntity.ok(new ArrayList<Artist>());
+    }
+
     @PostMapping("/countries")
     public ResponseEntity<Object> createCountry(@Validated @RequestBody Country country){
         try{
