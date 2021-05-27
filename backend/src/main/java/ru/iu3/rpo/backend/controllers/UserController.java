@@ -1,5 +1,6 @@
 package ru.iu3.rpo.backend.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +11,19 @@ import ru.iu3.rpo.backend.models.Museum;
 import ru.iu3.rpo.backend.models.User;
 import ru.iu3.rpo.backend.repositories.MuseumRepository;
 import ru.iu3.rpo.backend.repositories.UserRepository;
+import ru.iu3.rpo.backend.views.UserView;
 
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1")
+
 public class UserController {
     @Autowired
     UserRepository userRepository;
     @Autowired
     MuseumRepository museumRepository;
+
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userRepository.findAll();

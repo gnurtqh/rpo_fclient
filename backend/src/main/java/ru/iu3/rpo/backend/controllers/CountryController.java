@@ -1,25 +1,37 @@
 package ru.iu3.rpo.backend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import ru.iu3.rpo.backend.models.Artist;
 import ru.iu3.rpo.backend.models.Country;
 import ru.iu3.rpo.backend.repositories.CountryRepository;
+import ru.iu3.rpo.backend.tools.DataValidationException;
 
 import java.util.*;
-
+@CrossOrigin(origins="http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1")
 public class CountryController {
     @Autowired
     CountryRepository countryRepository;
-    @GetMapping("/countries")
-    public List<Country> getAllCountries() {
-        return countryRepository.findAll();
+   @GetMapping("/countries")
+//    public List<Country> getAllCountries() {
+//        return countryRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+//    }
+    public Page<Country> getAllCountries(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+       return countryRepository.findAll(PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name")));
+    }
+
+    @GetMapping("/countries/{id}")
+    public ResponseEntity<Country> getCountry(@PathVariable(value = "id") Long countryId) throws DataValidationException{
+        Country country = countryRepository.findById(countryId).orElseThrow(()->new DataValidationException("Counntry with this index can't be found"));
+        return ResponseEntity.ok(country);
     }
 
     @GetMapping("/countries/{id}/artists")
@@ -32,7 +44,7 @@ public class CountryController {
     }
 
     @PostMapping("/countries")
-    public ResponseEntity<Object> createCountry(@Validated @RequestBody Country country){
+    public ResponseEntity<Object> createCountry(@Validated @RequestBody Country country) throws DataValidationException {
         try{
             Country newCountry = countryRepository.save(country);
             return new ResponseEntity<Object>(newCountry, HttpStatus.OK);
@@ -40,31 +52,34 @@ public class CountryController {
         catch(Exception ex){
             String error;
             if(ex.getMessage().contains("countries.name_UNIQUE"))
-                error="country_already_exist";
+                throw new DataValidationException("country_already_exist");
             else if(ex.getMessage().contains("null"))
-                error="country_is_required";
+                throw new DataValidationException("country_is_required");
             else
-                error="undefined_error";
-            Map<String, String> map = new HashMap<>();
-            map.put("error", error);
-            return new ResponseEntity<Object>(map, HttpStatus.OK);
+                throw new DataValidationException("undefined_error");
         }
     }
     @PutMapping("/countries/{id}")
-    public ResponseEntity<Country> updateCountry(@PathVariable(value = "id") Long countryId, @Validated @RequestBody Country countryDetails){
-        Country country = null;
-        Optional<Country> cc = countryRepository.findById(countryId);
-        if(cc.isPresent())
-        {
-            country = cc.get();
+    public ResponseEntity<Country> updateCountry(@PathVariable(value = "id") Long countryId, @Validated @RequestBody Country countryDetails) throws DataValidationException {
+        try{
+            Country country = countryRepository.findById(countryId).orElseThrow(()-> new DataValidationException("This country does not exist"));
             country.name = countryDetails.name;
             countryRepository.save(country);
+            return ResponseEntity.ok(country);
         }
-        else
-        {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "country_not_found");
+        catch (Exception ex) {
+            String error;
+            if(ex.getMessage().contains("countries.name_UNIQUE"))
+                throw new DataValidationException("country_already_exist");
+            else if(ex.getMessage().contains("null"))
+                throw new DataValidationException("country_is_required");
+            else throw new DataValidationException("undefined_error");
         }
-        return ResponseEntity.ok(country);
+    }
+    @PostMapping("/deletecountries")
+    public ResponseEntity deleteCountries(@Validated @RequestBody List<Country> countries) {
+        countryRepository.deleteAll(countries);
+        return new ResponseEntity(HttpStatus.OK);
     }
     @DeleteMapping("/countries/{id}")
     public Map<String, Boolean> deleteCountry(@PathVariable(value="id") Long countryId){
