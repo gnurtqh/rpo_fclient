@@ -40,22 +40,27 @@ class NavigationBar extends React.Component {
           <FontAwesomeIcon icon={faBars} />
         </button>
         <Navbar.Brand>
-          <FontAwesomeIcon icon={faHome} />
-          &nbsp;My RPO
+          <Nav.Link as={Link} to="/home">
+            <FontAwesomeIcon icon={faHome} />
+            &nbsp;My RPO
+          </Nav.Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
+
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            {/* <Nav.Link href="/home">Home</Nav.Link> */}
             <Nav.Link as={Link} to="/home">
               Home
             </Nav.Link>
-            <Nav.Link onClick={() => this.props.history.push("/home")}>
-              Another Home
+            <Nav.Link onClick={() => this.props.history.push("/account")}>
+              My account
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-        <Navbar.Text>{this.props.user && this.props.user.name}</Navbar.Text>
+
+        <Navbar.Text className="ml-auto">
+          {this.props.user && this.props.user.name}
+        </Navbar.Text>
         {this.props.user && (
           <Nav.Link onClick={this.logout}>
             <FontAwesomeIcon icon={faUser} fixedWidth />

@@ -1,8 +1,6 @@
 package ru.iu3.rpo.backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import ru.iu3.rpo.backend.views.UserView;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -34,6 +32,9 @@ public class User {
     @JsonIgnore
     @Column(name="salt")
     public String salt;
+
+    @Transient
+    public  String np;
 
     @Column(name="token")
     public String token;

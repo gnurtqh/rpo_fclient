@@ -14,6 +14,7 @@ class BackendService {
     // });
     return axios.get(`${AUTH_URL}/logout`);
   }
+  //country
   retrieveAllCountries(page, limit) {
     return axios.get(`${API_URL}/countries?page=${page}&limit=${limit}`);
   }
@@ -28,6 +29,70 @@ class BackendService {
   }
   deleteCountries(countries) {
     return axios.post(`${API_URL}/deletecountries`, countries);
+  }
+  //artist
+  retrieveAllArtists(page, limit) {
+    return axios.get(`${API_URL}/artists?page=${page}&limit=${limit}`);
+  }
+  retrieveArtist(id) {
+    return axios.get(`${API_URL}/artists/${id}`);
+  }
+  createArtist(artist) {
+    return axios.post(`${API_URL}/artists`, artist);
+  }
+  updateArtist(artist) {
+    return axios.put(`${API_URL}/artists/${artist.id}`, artist);
+  }
+  deleteArtists(artists) {
+    return axios.post(`${API_URL}/deleteartists`, artists);
+  }
+  //museum
+  retrieveAllMuseums(page, limit) {
+    return axios.get(`${API_URL}/museums?page=${page}&limit=${limit}`);
+  }
+  retrieveMuseum(id) {
+    return axios.get(`${API_URL}/museums/${id}`);
+  }
+  createMuseum(museum) {
+    return axios.post(`${API_URL}/museums`, museum);
+  }
+  updateMuseum(museum) {
+    return axios.put(`${API_URL}/museums/${museum.id}`, museum);
+  }
+  deleteMuseums(museums) {
+    return axios.post(`${API_URL}/deletemuseums`, museums);
+  }
+  //painting
+  retrieveAllPaintings(page, limit) {
+    return axios.get(`${API_URL}/paintings?page=${page}&limit=${limit}`);
+  }
+  retrievePainting(id) {
+    return axios.get(`${API_URL}/paintings/${id}`);
+  }
+  createPainting(painting) {
+    return axios.post(`${API_URL}/paintings`, painting);
+  }
+  updatePainting(painting) {
+    return axios.put(`${API_URL}/paintings/${painting.id}`, painting);
+  }
+  deletePaintings(paintings) {
+    return axios.post(`${API_URL}/deletepaintings`, paintings);
+  }
+  //users
+  retrieveAllUsers(page, limit) {
+    return axios.get(`${API_URL}/users?page=${page}&limit=${limit}`);
+  }
+  retrieveUser(id) {
+    return axios.get(`${API_URL}/users/${id}`);
+  }
+  createUser(user) {
+    return axios.post(`${API_URL}/users`, user);
+  }
+  updateUser(user) {
+    return axios.put(`${API_URL}/users/${user.id}`, user);
+  }
+  deleteUsers(users) {
+    return axios.post(`${API_URL}/deleteusers`, users);
   }
 }
 function showError(msg) {

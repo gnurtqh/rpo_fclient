@@ -15,15 +15,13 @@ import ru.iu3.rpo.backend.tools.DataValidationException;
 
 import java.util.*;
 @CrossOrigin(origins="http://localhost:3000")
+
 @RestController
 @RequestMapping("/api/v1")
 public class CountryController {
     @Autowired
     CountryRepository countryRepository;
-   @GetMapping("/countries")
-//    public List<Country> getAllCountries() {
-//        return countryRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
-//    }
+    @GetMapping("/countries")
     public Page<Country> getAllCountries(@RequestParam("page") int page, @RequestParam("limit") int limit) {
        return countryRepository.findAll(PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name")));
     }
@@ -80,20 +78,5 @@ public class CountryController {
     public ResponseEntity deleteCountries(@Validated @RequestBody List<Country> countries) {
         countryRepository.deleteAll(countries);
         return new ResponseEntity(HttpStatus.OK);
-    }
-    @DeleteMapping("/countries/{id}")
-    public Map<String, Boolean> deleteCountry(@PathVariable(value="id") Long countryId){
-        Optional<Country> country = countryRepository.findById(countryId);
-        Map<String, Boolean> response = new HashMap<>();
-        if(country.isPresent())
-        {
-            countryRepository.delete(country.get());
-            response.put("deleted", Boolean.TRUE);
-        }
-        else
-        {
-            response.put("deleted", Boolean.FALSE);
-        }
-        return response;
     }
 }

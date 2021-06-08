@@ -4,13 +4,13 @@ import React, { Component } from "react";
 import BackendService from "../services/BackendService";
 import Alert from "./Alert";
 import PaginationC from "./PaginationC";
-class CountryList extends Component {
+class MuseumList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       message: undefined,
-      countries: [],
-      selected_countries: [],
+      museums: [],
+      selected_museums: [],
       show_alert: false,
       checkedItems: [],
       hidden: false,
@@ -18,24 +18,23 @@ class CountryList extends Component {
       limit: 2,
       totalCount: 0,
     };
-    this.refreshCountry = this.refreshCountry.bind(this);
-    this.updateCountryClicked = this.updateCountryClicked.bind(this);
-    this.addCountryClicked = this.addCountryClicked.bind(this);
+    this.refreshMuseum = this.refreshMuseum.bind(this);
+    this.updateMuseumClicked = this.updateMuseumClicked.bind(this);
+    this.addMuseumClicked = this.addMuseumClicked.bind(this);
     this.onDelete = this.onDelete.bind(this);
     this.closeAlert = this.closeAlert.bind(this);
     this.handleCheckChange = this.handleCheckChange.bind(this);
     this.handleGroupCheckChange = this.handleGroupCheckChange.bind(this);
     this.setChecked = this.setChecked.bind(this);
-    this.deleteCountriesClicked = this.deleteCountriesClicked.bind(this);
+    this.deleteMuseumsClicked = this.deleteMuseumsClicked.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
-    this.setPageLimit = this.setPageLimit.bind(this);
   }
   onPageChange(cp) {
-    this.refreshCountries(cp);
+    this.refreshMuseums(cp);
   }
 
   setChecked(v) {
-    let checkedCopy = Array(this.state.countries.length).fill(v);
+    let checkedCopy = Array(this.state.museums.length).fill(v);
     this.setState({ checkedItems: checkedCopy });
   }
   handleCheckChange(e) {
@@ -50,9 +49,9 @@ class CountryList extends Component {
     this.setChecked(isChecked);
   }
 
-  deleteCountriesClicked() {
+  deleteMuseumsClicked() {
     let x = [];
-    this.state.countries.map((t, idx) => {
+    this.state.museums.map((t, idx) => {
       if (this.state.checkedItems[idx]) {
         x.push(t);
       }
@@ -60,34 +59,34 @@ class CountryList extends Component {
     });
     if (x.length > 0) {
       var msg;
-      if (x.length > 1) msg = `Are you want to delete ${x.length} countries?`;
-      else msg = "Are you want to delete all countries?";
-      this.setState({ show_alert: true, selected_countries: x, message: msg });
+      if (x.length > 1) msg = `Are you want to delete ${x.length} museums?`;
+      else msg = "Are you want to delete all museums?";
+      this.setState({ show_alert: true, selected_museums: x, message: msg });
     }
   }
   onDelete() {
-    BackendService.deleteCountries(this.state.selected_countries)
-      .then(() => this.refreshCountries(this.state.page))
+    BackendService.deleteMuseums(this.state.selected_museums)
+      .then(() => this.refreshMuseums(this.state.page))
       .catch(() => {});
   }
   closeAlert() {
     this.setState({ show_alert: false });
   }
-  refreshCountry() {
-    BackendService.retrieveAllCountries()
+  refreshMuseum() {
+    BackendService.retrieveAllMuseums()
       .then((res) => {
-        this.setState({ countries: res.data, hidden: false });
+        this.setState({ museums: res.data, hidden: false });
       })
       .catch(() => {
         this.setState({ hidden: true });
       })
       .finally(() => this.setChecked(false));
   }
-  refreshCountries(cp) {
-    BackendService.retrieveAllCountries(cp, this.state.limit)
+  refreshMuseums(cp) {
+    BackendService.retrieveAllMuseums(cp, this.state.limit)
       .then((res) => {
         this.setState({
-          countries: res.data.content,
+          museums: res.data.content,
           totalCount: res.data.totalElements,
           page: cp,
           hidden: false,
@@ -99,56 +98,40 @@ class CountryList extends Component {
       .finally(() => this.setChecked(false));
   }
   componentDidMount() {
-    this.refreshCountries(0);
+    this.refreshMuseums(0);
   }
-  updateCountryClicked(id) {
-    this.props.history.push(`/countries/${id}`);
+  updateMuseumClicked(id) {
+    this.props.history.push(`/museums/${id}`);
   }
-  addCountryClicked() {
-    this.props.history.push(`/countries/-1`);
-  }
-  setPageLimit(value) {
-    this.setState({ ...this.state, limit: value });
-    BackendService.retrieveAllCountries(0, value)
-      .then((res) => {
-        this.setState({
-          countries: res.data.content,
-          totalCount: res.data.totalElements,
-          page: 0,
-          hidden: false,
-        });
-      })
-      .catch(() => {
-        this.setState({ totalCount: 0, hidden: true });
-      })
-      .finally(() => this.setChecked(false));
+  addMuseumClicked() {
+    this.props.history.push(`/museums/-1`);
   }
   render() {
+    if (this.state.hidden) return null;
     return (
       <div className="m-4">
         <div className="row my-2 mr-0">
-          <h3>Countries</h3>
+          <h3>museums</h3>
 
           <button
             className="btn btn-outLine-secondary ml-auto"
-            onClick={this.addCountryClicked}
+            onClick={this.addMuseumClicked}
           >
             <FontAwesomeIcon icon={faPlus} />
             &nbsp;Add
           </button>
           <button
             className="btn btn-outLine-secondary ml-2"
-            onClick={this.deleteCountriesClicked}
+            onClick={this.deleteMuseumsClicked}
           >
             <FontAwesomeIcon icon={faTrash} />
             &nbsp;Delete
           </button>
         </div>
-        {this.state.countries?.length > 0 && (
+        {this.state.museums?.length > 0 && (
           <PaginationC
             totalRecords={this.state.totalCount}
             pageLimit={this.state.limit}
-            setPageLimit={this.setPageLimit}
             pageNeighbours={1}
             onPageChange={this.onPageChange}
           />
@@ -171,18 +154,16 @@ class CountryList extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.countries &&
-                this.state.countries.map((country, index) => (
-                  <tr key={country.id}>
-                    <td>{country.name}</td>
+              {this.state.museums &&
+                this.state.museums.map((museum, index) => (
+                  <tr key={museum.id}>
+                    <td>{museum.name}</td>
                     <td>
                       <div className="btn-toolbar">
                         <div className="btn-group ml-auto">
                           <button
                             className="btn btn-outLine-secondary btn-sm btn-toolbar"
-                            onClick={() =>
-                              this.updateCountryClicked(country.id)
-                            }
+                            onClick={() => this.updateMuseumClicked(museum.id)}
                           >
                             <FontAwesomeIcon icon={faEdit} fixedWidth />
                           </button>
@@ -219,4 +200,4 @@ class CountryList extends Component {
   }
 }
 
-export default CountryList;
+export default MuseumList;

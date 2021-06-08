@@ -8,12 +8,21 @@ import {
   Redirect,
 } from "react-router-dom";
 import "./App.css";
+import Account from "./components/Account";
+import Artist from "./components/Artist";
+import ArtistList from "./components/ArtistList";
 import Country from "./components/Country";
 import CountryList from "./components/CountryList";
 import Home from "./components/Home";
 import Login from "./components/Login";
+import Museum from "./components/Museum";
+import MuseumList from "./components/MuseumList";
 import NavigationBar from "./components/NavigationBar";
+import Painting from "./components/Painting";
+import PaintingList from "./components/PaintingList";
 import SideBar from "./components/SideBar";
+import User from "./components/User";
+import UserList from "./components/UserList";
 import Utils from "./utils/Utils";
 
 const AuthRoute = (props) => {
@@ -40,6 +49,15 @@ function App(props) {
               <AuthRoute path="/home" exact component={Home} />
               <AuthRoute path="/countries" exact component={CountryList} />
               <AuthRoute path="/countries/:id" component={Country} />
+              <AuthRoute path="/artists" exact component={ArtistList} />
+              <AuthRoute path="/artists/:id" component={Artist} />
+              <AuthRoute path="/museums" exact component={MuseumList} />
+              <AuthRoute path="/museums/:id" component={Museum} />
+              <AuthRoute path="/paintings" exact component={PaintingList} />
+              <AuthRoute path="/paintings/:id" component={Painting} />
+              <AuthRoute path="/users" exact component={UserList} />
+              <AuthRoute path="/users/:id" component={User} />
+              <AuthRoute path="/account" exact component={Account} />
               <Route path="/login" exact component={Login} />
             </Switch>
           </div>

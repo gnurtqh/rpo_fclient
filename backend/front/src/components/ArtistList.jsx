@@ -4,13 +4,13 @@ import React, { Component } from "react";
 import BackendService from "../services/BackendService";
 import Alert from "./Alert";
 import PaginationC from "./PaginationC";
-class CountryList extends Component {
+class ArtistList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       message: undefined,
-      countries: [],
-      selected_countries: [],
+      artists: [],
+      selected_artists: [],
       show_alert: false,
       checkedItems: [],
       hidden: false,
@@ -18,24 +18,23 @@ class CountryList extends Component {
       limit: 2,
       totalCount: 0,
     };
-    this.refreshCountry = this.refreshCountry.bind(this);
-    this.updateCountryClicked = this.updateCountryClicked.bind(this);
-    this.addCountryClicked = this.addCountryClicked.bind(this);
+    this.refreshArtist = this.refreshArtist.bind(this);
+    this.updateArtistClicked = this.updateArtistClicked.bind(this);
+    this.addArtistClicked = this.addArtistClicked.bind(this);
     this.onDelete = this.onDelete.bind(this);
     this.closeAlert = this.closeAlert.bind(this);
     this.handleCheckChange = this.handleCheckChange.bind(this);
     this.handleGroupCheckChange = this.handleGroupCheckChange.bind(this);
     this.setChecked = this.setChecked.bind(this);
-    this.deleteCountriesClicked = this.deleteCountriesClicked.bind(this);
+    this.deleteArtistsClicked = this.deleteArtistsClicked.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
-    this.setPageLimit = this.setPageLimit.bind(this);
   }
   onPageChange(cp) {
-    this.refreshCountries(cp);
+    this.refreshArtists(cp);
   }
 
   setChecked(v) {
-    let checkedCopy = Array(this.state.countries.length).fill(v);
+    let checkedCopy = Array(this.state.artists.length).fill(v);
     this.setState({ checkedItems: checkedCopy });
   }
   handleCheckChange(e) {
@@ -50,9 +49,9 @@ class CountryList extends Component {
     this.setChecked(isChecked);
   }
 
-  deleteCountriesClicked() {
+  deleteArtistsClicked() {
     let x = [];
-    this.state.countries.map((t, idx) => {
+    this.state.artists.map((t, idx) => {
       if (this.state.checkedItems[idx]) {
         x.push(t);
       }
@@ -60,34 +59,34 @@ class CountryList extends Component {
     });
     if (x.length > 0) {
       var msg;
-      if (x.length > 1) msg = `Are you want to delete ${x.length} countries?`;
-      else msg = "Are you want to delete all countries?";
-      this.setState({ show_alert: true, selected_countries: x, message: msg });
+      if (x.length > 1) msg = `Are you want to delete ${x.length} artists?`;
+      else msg = "Are you want to delete all artists?";
+      this.setState({ show_alert: true, selected_artists: x, message: msg });
     }
   }
   onDelete() {
-    BackendService.deleteCountries(this.state.selected_countries)
-      .then(() => this.refreshCountries(this.state.page))
+    BackendService.deleteArtists(this.state.selected_artists)
+      .then(() => this.refreshArtists(this.state.page))
       .catch(() => {});
   }
   closeAlert() {
     this.setState({ show_alert: false });
   }
-  refreshCountry() {
-    BackendService.retrieveAllCountries()
+  refreshArtist() {
+    BackendService.retrieveAllArtists()
       .then((res) => {
-        this.setState({ countries: res.data, hidden: false });
+        this.setState({ artists: res.data, hidden: false });
       })
       .catch(() => {
         this.setState({ hidden: true });
       })
       .finally(() => this.setChecked(false));
   }
-  refreshCountries(cp) {
-    BackendService.retrieveAllCountries(cp, this.state.limit)
+  refreshArtists(cp) {
+    BackendService.retrieveAllArtists(cp, this.state.limit)
       .then((res) => {
         this.setState({
-          countries: res.data.content,
+          artists: res.data.content,
           totalCount: res.data.totalElements,
           page: cp,
           hidden: false,
@@ -99,56 +98,40 @@ class CountryList extends Component {
       .finally(() => this.setChecked(false));
   }
   componentDidMount() {
-    this.refreshCountries(0);
+    this.refreshArtists(0);
   }
-  updateCountryClicked(id) {
-    this.props.history.push(`/countries/${id}`);
+  updateArtistClicked(id) {
+    this.props.history.push(`/artists/${id}`);
   }
-  addCountryClicked() {
-    this.props.history.push(`/countries/-1`);
-  }
-  setPageLimit(value) {
-    this.setState({ ...this.state, limit: value });
-    BackendService.retrieveAllCountries(0, value)
-      .then((res) => {
-        this.setState({
-          countries: res.data.content,
-          totalCount: res.data.totalElements,
-          page: 0,
-          hidden: false,
-        });
-      })
-      .catch(() => {
-        this.setState({ totalCount: 0, hidden: true });
-      })
-      .finally(() => this.setChecked(false));
+  addArtistClicked() {
+    this.props.history.push(`/artists/-1`);
   }
   render() {
+    if (this.state.hidden) return null;
     return (
       <div className="m-4">
         <div className="row my-2 mr-0">
-          <h3>Countries</h3>
+          <h3>artists</h3>
 
           <button
             className="btn btn-outLine-secondary ml-auto"
-            onClick={this.addCountryClicked}
+            onClick={this.addArtistClicked}
           >
             <FontAwesomeIcon icon={faPlus} />
             &nbsp;Add
           </button>
           <button
             className="btn btn-outLine-secondary ml-2"
-            onClick={this.deleteCountriesClicked}
+            onClick={this.deleteArtistsClicked}
           >
             <FontAwesomeIcon icon={faTrash} />
             &nbsp;Delete
           </button>
         </div>
-        {this.state.countries?.length > 0 && (
+        {this.state.artists?.length > 0 && (
           <PaginationC
             totalRecords={this.state.totalCount}
             pageLimit={this.state.limit}
-            setPageLimit={this.setPageLimit}
             pageNeighbours={1}
             onPageChange={this.onPageChange}
           />
@@ -171,18 +154,16 @@ class CountryList extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.countries &&
-                this.state.countries.map((country, index) => (
-                  <tr key={country.id}>
-                    <td>{country.name}</td>
+              {this.state.artists &&
+                this.state.artists.map((artist, index) => (
+                  <tr key={artist.id}>
+                    <td>{artist.name}</td>
                     <td>
                       <div className="btn-toolbar">
                         <div className="btn-group ml-auto">
                           <button
                             className="btn btn-outLine-secondary btn-sm btn-toolbar"
-                            onClick={() =>
-                              this.updateCountryClicked(country.id)
-                            }
+                            onClick={() => this.updateArtistClicked(artist.id)}
                           >
                             <FontAwesomeIcon icon={faEdit} fixedWidth />
                           </button>
@@ -219,4 +200,4 @@ class CountryList extends Component {
   }
 }
 
-export default CountryList;
+export default ArtistList;

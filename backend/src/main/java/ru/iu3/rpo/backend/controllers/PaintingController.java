@@ -1,21 +1,24 @@
 package ru.iu3.rpo.backend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.iu3.rpo.backend.models.Museum;
+import ru.iu3.rpo.backend.models.Country;
 import ru.iu3.rpo.backend.models.Painting;
-import ru.iu3.rpo.backend.repositories.MuseumRepository;
 import ru.iu3.rpo.backend.repositories.PaintingRepository;
+import ru.iu3.rpo.backend.tools.DataValidationException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+@CrossOrigin(origins="http://localhost:3000")
 @RestController
 @RequestMapping("/api/v1")
 public class PaintingController {
@@ -23,8 +26,13 @@ public class PaintingController {
     PaintingRepository paintingRepository;
 
     @GetMapping("/paintings")
-    public List<Painting> getAllMuseums() {
-        return paintingRepository.findAll();
+    public Page<Painting> getAllPaintings(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        return paintingRepository.findAll(PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "name")));
+    }
+    @GetMapping("/paintings/{id}")
+    public ResponseEntity<Painting> getPainting(@PathVariable(value = "id") Long paintingId) throws DataValidationException {
+        Painting painting = paintingRepository.findById(paintingId).orElseThrow(()->new DataValidationException("Painting with this index can't be found"));
+        return ResponseEntity.ok(painting);
     }
 
     @PostMapping("/paintings")
@@ -61,16 +69,9 @@ public class PaintingController {
         return ResponseEntity.ok(painting);
     }
 
-    @DeleteMapping("/paintings/{id}")
-    public Map<String, Boolean> deleteMuseum(@PathVariable(value = "id") Long paintingId) {
-        Optional<Painting> painting = paintingRepository.findById(paintingId);
-        Map<String, Boolean> response = new HashMap<>();
-        if (painting.isPresent()) {
-            paintingRepository.delete(painting.get());
-            response.put("deleted", Boolean.TRUE);
-        } else {
-            response.put("deleted", Boolean.FALSE);
-        }
-        return response;
+    @PostMapping("/deletepaintings")
+    public ResponseEntity deleteCountries(@Validated @RequestBody List<Painting> paintings) {
+        paintingRepository.deleteAll(paintings);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
